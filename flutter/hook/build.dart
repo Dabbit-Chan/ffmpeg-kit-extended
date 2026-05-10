@@ -158,6 +158,11 @@ Future<FFmpegArtifact?> _resolveArtifact(
     if (_isUri(overrideUrl)) {
       url = overrideUrl;
       filename = p.basename(Uri.parse(url).path);
+      return _handleDownloadedFile(
+        File(p.join(cacheDir.path, filename)),
+        cacheDir,
+        input,
+      );
     } else {
       final localFile = p.isAbsolute(overrideUrl)
           ? File(overrideUrl)

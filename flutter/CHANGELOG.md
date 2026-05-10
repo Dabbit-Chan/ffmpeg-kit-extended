@@ -1,5 +1,9 @@
 # FFmpegKit Extended Flutter Plugin CHANGELOG
 
+## Version 0.4.4
+
+- Fix build hook to skip SHA verification when override path is provided.
+
 ## Version 0.4.3
 
 - Added release file SHA verification for added security
