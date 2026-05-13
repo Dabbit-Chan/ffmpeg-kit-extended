@@ -1,5 +1,9 @@
 # FFmpegKit Extended Flutter Plugin CHANGELOG
 
+## Version 0.4.5
+
+- Fix build hook to correctly download remote files from URL.
+
 ## Version 0.4.4
 
 - Fix build hook to skip SHA verification when override path is provided.
