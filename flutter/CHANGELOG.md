@@ -17,6 +17,14 @@
 - Reduced example-app UI stalls during remote recording scenarios by batching log rendering and file writes, throttling stats-driven repainting, and avoiding high-volume debug log mirroring into the visible console.
 - Fix Windows and Android stability issues.
 
+## Version 0.4.6
+
+- Fix binary version
+
+## Version 0.4.5
+
+- Fix build hook to correctly download remote files from URL.
+
 ## Version 0.4.4
 
 - Fix build hook to skip SHA verification when override path is provided.
