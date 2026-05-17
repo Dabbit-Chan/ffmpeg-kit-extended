@@ -161,7 +161,7 @@ Future<FFmpegArtifact?> _resolveArtifact(
       filename = p.basename(Uri.parse(url).path);
       final targetFile = File(p.join(cacheDir.path, filename));
       if (!await _downloadFile(url, targetFile)) {
-        throw _exception('Failed to download $url');
+        throw _exception('Failed to download from $url.');
       }
       return await _handleDownloadedFile(targetFile, cacheDir, input);
     } else {
@@ -225,7 +225,9 @@ Future<FFmpegArtifact?> _resolveArtifact(
   if (!targetFile.existsSync()) {
     _log('Downloading $url...');
     if (!await _downloadFile(url, targetFile)) {
-      throw _exception('Failed to download $url');
+      throw _exception(
+        'Failed to download from $url. If you are using official bundles, please upgrade your package version immediately and run `flutter clean` then re-build to download updated binaries.',
+      );
     }
   }
 
