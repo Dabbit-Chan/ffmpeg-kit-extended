@@ -73,7 +73,7 @@ class MediaInformationSession extends FFprobeSession {
     MediaInformationSessionCompleteCallback? cb,
   ) {
     _mediaInfoCompleteCallback = cb;
-    _ensureRegistered();
+    ensureRegistered();
   }
 
   /// Clears the completion callback and unregisters from [CallbackManager]
@@ -365,7 +365,7 @@ class MediaInformationSession extends FFprobeSession {
             rethrow;
           } finally {
             closeLogStreams();
-            _unregister();
+            unregister();
           }
         })
         .catchError((Object e, StackTrace st) {
@@ -404,7 +404,7 @@ class MediaInformationSession extends FFprobeSession {
     if (logCallback != null) {
       setLogCallback(logCallback);
     }
-    _ensureRegistered();
+    ensureRegistered();
 
     await SessionQueueManager().executeSession(this, _runAsyncMediaInfo);
     return this;
@@ -604,7 +604,7 @@ class MediaInformationSession extends FFprobeSession {
       // future, so the session is fully settled from any observer's perspective.
       _mediaInfoCompleteCallback = userCb;
       closeLogStreams();
-      _unregister();
+      unregister();
 
       try {
         userCb?.call(s);
@@ -651,7 +651,7 @@ class MediaInformationSession extends FFprobeSession {
         stackTrace: st,
       );
       closeLogStreams();
-      _unregister();
+      unregister();
       if (!sessionCompleter.isCompleted) sessionCompleter.complete();
       rethrow;
     }
