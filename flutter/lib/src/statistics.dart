@@ -25,6 +25,9 @@ class Statistics {
   final int sessionId;
 
   /// The current time in milliseconds.
+  final int timeElapsed;
+
+  /// The current time in milliseconds.
   final int time;
 
   /// The current size of the output in bytes.
@@ -45,24 +48,58 @@ class Statistics {
   /// The current video quality (e.g., quantizer value).
   final double videoQuality;
 
+  /// The current duplicated frame count reported by FFmpeg.
+  final int dupFrames;
+
+  /// The current dropped frame count reported by FFmpeg.
+  final int dropFrames;
+
+  /// A normalized transcoding progress value between `0.0` and `1.0`.
+  ///
+  /// This is available only when the session has a bounded effective media
+  /// duration. For live or otherwise unbounded commands, this remains `null`.
+  final double? transcodingProgress;
+
   /// Creates a [Statistics] instance with the provided values.
-  Statistics(this.sessionId, this.time, this.size, this.bitrate, this.speed,
-      this.videoFrameNumber, this.videoFps, this.videoQuality);
+  Statistics(
+    this.sessionId,
+    this.timeElapsed,
+    this.time,
+    this.size,
+    this.bitrate,
+    this.speed,
+    this.videoFrameNumber,
+    this.videoFps,
+    this.videoQuality,
+    this.dupFrames,
+    this.dropFrames,
+    this.transcodingProgress,
+  );
 
   /// Returns a string representation of this statistics.
   @override
   String toString() =>
-      'Statistics($sessionId, time: $time, size: $size, bitrate: $bitrate, speed: $speed, frame: $videoFrameNumber, fps: $videoFps, quality: $videoQuality)';
+      'Statistics($sessionId, timeElapsed: $timeElapsed, time: $time, size: $size, bitrate: $bitrate, speed: $speed, frame: $videoFrameNumber, fps: $videoFps, quality: $videoQuality, dupFrames: $dupFrames, dropFrames: $dropFrames, transcodingProgress: $transcodingProgress)';
+
+  /// Returns the transcoding progress as an integer percentage when available.
+  int? get transcodingProgressPercent =>
+      transcodingProgress == null
+          ? null
+          : (transcodingProgress! * 100).round().clamp(0, 100);
 
   /// Converts this statistics to a JSON map.
   Map<String, dynamic> toJson() => {
-        'sessionId': sessionId,
-        'time': time,
-        'size': size,
-        'bitrate': bitrate,
-        'speed': speed,
-        'videoFrameNumber': videoFrameNumber,
-        'videoFps': videoFps,
-        'videoQuality': videoQuality,
-      };
+    'sessionId': sessionId,
+    'timeElapsed': timeElapsed,
+    'time': time,
+    'size': size,
+    'bitrate': bitrate,
+    'speed': speed,
+    'videoFrameNumber': videoFrameNumber,
+    'videoFps': videoFps,
+    'videoQuality': videoQuality,
+    'dupFrames': dupFrames,
+    'dropFrames': dropFrames,
+    'transcodingProgress': transcodingProgress,
+  };
 }

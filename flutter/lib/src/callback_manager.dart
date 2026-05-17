@@ -50,11 +50,14 @@ typedef FFmpegKitStatisticsCallbackFunction =
       FFmpegSessionHandle,
       Int64,
       Int64,
+      Int64,
       Double,
       Double,
       Int64,
       Double,
       Double,
+      Int64,
+      Int64,
       Pointer<Void>,
     );
 
@@ -131,20 +134,14 @@ void _onFFmpegLog(
 
   final sessionId = _safeGetSessionId(sessionHandle, '_onFFmpegLog');
   final session = sessionId > 0
-      ? CallbackManager().ffmpegSessions[sessionId]
+      ? CallbackManager().ffmpegSessions[sessionId] ??
+            CallbackManager().ffprobeSessions[sessionId] ??
+            CallbackManager().ffplaySessions[sessionId] ??
+            CallbackManager().mediaInformationSessions[sessionId]
       : null;
 
   if (session != null) {
-    // Poll the session's buffered log entries since the last delivery.
-    final count = session.getLogsCount();
-    for (int i = session.logsProcessed; i < count; i++) {
-      final message = session.getLogAt(i);
-      final level = session.getLogLevelAt(i);
-      final logObj = Log(session.sessionId, level, message);
-      CallbackManager().globalLogCallback?.call(logObj);
-      session.logCallback?.call(logObj);
-    }
-    session.logsProcessed = count;
+    session.dispatchPendingLogs();
   }
   // If no session is found there is nothing to route. Do NOT print a warning
   // here — this callback can legally fire for global log redirection where no
@@ -156,6 +153,7 @@ void _onFFmpegLog(
 /// Handles statistics from an FFmpeg session.
 void _onFFmpegStatistics(
   FFmpegSessionHandle sessionHandle,
+  int timeElapsed,
   int time,
   int size,
   double bitrate,
@@ -163,13 +161,20 @@ void _onFFmpegStatistics(
   int videoFrameNumber,
   double videoFps,
   double videoQuality,
+  int dupFrames,
+  int dropFrames,
   Pointer<Void> userData,
 ) {
   // Resolve session ID reliably through the C API.
   final sessionId = _safeGetSessionId(sessionHandle, '_onFFmpegStatistics');
+  final session = sessionId > 0
+      ? CallbackManager().ffmpegSessions[sessionId]
+      : null;
+  final transcodingProgress = session?.calculateTranscodingProgress(time);
 
   final stats = Statistics(
     sessionId,
+    timeElapsed,
     time,
     size,
     bitrate,
@@ -177,13 +182,12 @@ void _onFFmpegStatistics(
     videoFrameNumber,
     videoFps,
     videoQuality,
+    dupFrames,
+    dropFrames,
+    transcodingProgress,
   );
 
   CallbackManager().globalStatisticsCallback?.call(stats);
-
-  final session = sessionId > 0
-      ? CallbackManager().ffmpegSessions[sessionId]
-      : null;
 
   if (session != null) {
     session.statisticsCallback?.call(stats);

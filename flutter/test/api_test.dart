@@ -41,6 +41,7 @@ typedef NativeCompleteCallback =
 typedef NativeStatisticsCallback =
     Void Function(
       Pointer<Void> session,
+      Int64 timeElapsed,
       Int64 time,
       Int64 size,
       Double bitrate,
@@ -48,6 +49,8 @@ typedef NativeStatisticsCallback =
       Int64 videoFrameNumber,
       Double videoFps,
       Double videoQuality,
+      Int64 dupFrames,
+      Int64 dropFrames,
       Pointer<Void> userData,
     );
 
@@ -2799,6 +2802,7 @@ void main() {
         // 3. For StatisticsCallback
         final statsCb = NativeCallable<NativeStatisticsCallback>.listener((
           Pointer<Void> session,
+          int timeElapsed,
           int time,
           int size,
           double bitrate,
@@ -2806,6 +2810,8 @@ void main() {
           int videoFrameNumber,
           double videoFps,
           double videoQuality,
+          int dupFrames,
+          int dropFrames,
           Pointer<Void> userData,
         ) {
           capturer.statsCalled = true;
@@ -2936,6 +2942,7 @@ void main() {
         });
         final statsCb = NativeCallable<NativeStatisticsCallback>.listener((
           Pointer<Void> session,
+          int timeElapsed,
           int time,
           int size,
           double bitrate,
@@ -2943,6 +2950,8 @@ void main() {
           int videoFrameNumber,
           double videoFps,
           double videoQuality,
+          int dupFrames,
+          int dropFrames,
           Pointer<Void> userData,
         ) {
           capturer.statsCalled = true;
@@ -3067,6 +3076,7 @@ void main() {
           final statsCb = NativeCallable<NativeStatisticsCallback>.listener(
             (
               Pointer<Void> s,
+              int timeElapsed,
               int t,
               int sz,
               double b,
@@ -3074,6 +3084,8 @@ void main() {
               int vf,
               double vfps,
               double vq,
+              int dupFrames,
+              int dropFrames,
               Pointer<Void> _,
             ) => statsCalled = true,
           );
@@ -3232,6 +3244,7 @@ void main() {
           final statsCb = NativeCallable<NativeStatisticsCallback>.listener(
             (
               Pointer<Void> s,
+              int timeElapsed,
               int t,
               int sz,
               double b,
@@ -3239,6 +3252,8 @@ void main() {
               int vf,
               double vfps,
               double vq,
+              int dupFrames,
+              int dropFrames,
               Pointer<Void> _,
             ) => statsCalled = true,
           );
