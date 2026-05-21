@@ -67,7 +67,7 @@ jobs:
           - platform: macos
             os: macos-latest
             artifact_name: build/macos/Build/Products/Release
-            build_command: flutter build macos --release
+            build_command: flutter build macos --release --verbose
 
     steps:
       - name: Checkout repository
@@ -91,7 +91,7 @@ jobs:
           flutter config --no-analytics
           yes | flutter doctor --android-licenses >/dev/null
 
-      - name: Configure iOS licenses
+      - name: Configure Apple build
         if: matrix.platform == 'ios' || matrix.platform == 'macos'
         run: |
           flutter config --no-analytics
@@ -136,6 +136,11 @@ jobs:
       - name: Build ${{ matrix.platform }}
         working-directory: flutter/example
         run: ${{ matrix.build_command }}
+
+      - name: Unlock keychain
+        run: |
+          security unlock-keychain -p "${{ secrets.KEYCHAIN_PASSWORD }}" $HOME/Library/Keychains/login.keychain-db
+          security set-keychain-settings -lut 21600 $HOME/Library/Keychains/login.keychain-db
 
       - name: Upload artifacts
         if: matrix.platform == 'android'
