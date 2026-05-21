@@ -51,23 +51,23 @@ jobs:
           - platform: android
             os: ubuntu-latest
             artifact_name: app-release.apk
-            build_command: flutter build apk --release
+            build_command: flutter build apk --debug
           - platform: ios
             os: macos-latest
             artifact_name: Runner.app
-            build_command: flutter build ios --simulator --no-codesign
+            build_command: flutter build ios --simulator --debug --no-codesign
           - platform: windows
             os: windows-latest
-            artifact_name: build\windows\x64\runner\Release
-            build_command: flutter build windows --release
+            artifact_name: build\windows\x64\runner\Debug
+            build_command: flutter build windows --debug
           - platform: linux
             os: ubuntu-latest
-            artifact_name: build/linux/x64/release/bundle
-            build_command: flutter build linux --release
+            artifact_name: build/linux/x64/debug/bundle
+            build_command: flutter build linux --debug
           - platform: macos
             os: macos-latest
-            artifact_name: build/macos/Build/Products/Release
-            build_command: flutter build macos --release --verbose
+            artifact_name: build/macos/Build/Products/Debug
+            build_command: flutter build macos --debug --verbose
 
     steps:
       - name: Checkout repository
@@ -121,14 +121,6 @@ jobs:
         working-directory: flutter/example
         run: flutter pub get
 
-      - name: Clean generated Apple build state
-        if: matrix.platform == 'ios' || matrix.platform == 'macos'
-        working-directory: flutter/example
-        run: |
-          flutter clean
-          rm -rf ios/Flutter/ephemeral
-          rm -rf macos/Flutter/ephemeral
-
       - name: Get Flutter dependencies
         working-directory: flutter/example
         run: flutter pub get --offline || true
@@ -136,8 +128,9 @@ jobs:
       - name: Unlock keychain
         if: matrix.platform == 'ios' || matrix.platform == 'macos'
         run: |
-          security unlock-keychain -p "${{ secrets.KEYCHAIN_PASSWORD }}" $HOME/Library/Keychains/login.keychain-db
-          security set-keychain-settings -lut 21600 $HOME/Library/Keychains/login.keychain-db
+          security default-keychain -s login.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/login.keychain
+          security set-keychain-settings -lut 21600 ~/Library/Keychains/login.keychain
 
       - name: Build ${{ matrix.platform }}
         working-directory: flutter/example
