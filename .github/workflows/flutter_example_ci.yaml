@@ -66,7 +66,7 @@ jobs:
         if: matrix.platform == 'android'
         run: |
           flutter config --no-analytics
-          flutter doctor --android-licenses 2>&1 | Out-Null
+          yes | flutter doctor --android-licenses >/dev/null
 
       - name: Configure iOS licenses
         if: matrix.platform == 'ios' || matrix.platform == 'macos'
