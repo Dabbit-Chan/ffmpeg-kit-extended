@@ -24,7 +24,7 @@
 // FfplayKitPlugin.  This file exists only to satisfy GeneratedPluginRegistrant,
 // which calls +[FfmpegKitExtendedFlutterPlugin registerWithRegistrar:].
 
-#import "include/FFmpegKitExtendedFlutterPlugin.h"
+#import "include/FfmpegKitExtendedFlutterPlugin.h"
 #import "include/FfplayKitPlugin.h"
 #include <dlfcn.h>
 
