@@ -67,7 +67,7 @@ jobs:
           - platform: macos
             os: macos-latest
             artifact_name: build/macos/Build/Products/Debug
-            build_command: flutter build macos --debug --verbose
+            build_command: flutter build macos --debug --config-only --verbose
 
     steps:
       - name: Checkout repository
@@ -126,15 +126,42 @@ jobs:
         run: flutter pub get --offline || true
 
       - name: Unlock keychain
-        if: matrix.platform == 'ios' || matrix.platform == 'macos'
+        if: matrix.platform == 'ios'
         run: |
           security default-keychain -s login.keychain
           security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/login.keychain
           security set-keychain-settings -lut 21600 ~/Library/Keychains/login.keychain
 
       - name: Build ${{ matrix.platform }}
+        if: matrix.platform != 'macos'
         working-directory: flutter/example
         run: ${{ matrix.build_command }}
+
+      - name: Prepare macOS build
+        if: matrix.platform == 'macos'
+        working-directory: flutter/example
+        run: ${{ matrix.build_command }}
+
+      - name: Build macOS unsigned
+        if: matrix.platform == 'macos'
+        working-directory: flutter/example/macos
+        run: |
+          xcodebuild \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Debug \
+            -derivedDataPath ../build/macos \
+            -destination 'platform=macOS' \
+            OBJROOT=../build/macos/Build/Intermediates.noindex \
+            SYMROOT=../build/macos/Build/Products \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            EXPANDED_CODE_SIGN_IDENTITY="" \
+            EXPANDED_CODE_SIGN_IDENTITY_NAME="" \
+            DEVELOPMENT_TEAM="" \
+            build
 
       - name: Upload artifacts
         if: matrix.platform == 'android'
