@@ -26,6 +26,7 @@ class ConfigResult {
 
 void main(List<String> args) async {
   await build(args, (input, output) async {
+    if (!input.config.buildCodeAssets) return;
     final packageName = input.packageName;
     targetOS = input.config.code.targetOS;
     targetArch = input.config.code.targetArchitecture;
