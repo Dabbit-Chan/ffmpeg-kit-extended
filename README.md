@@ -138,8 +138,8 @@ You will have to update your app's minimum requirements on your own to match the
 
 | Feature   | Base | Audio | Video | Video+Hardware | Full |
 | --------- | ---- | ----- | ----- | -------------- | ---- |
-| Video     |      |       | x     |                | x    |
-| Audio     |      | x     | x     |                | x    |
+| Video     |      |       | x     | x              | x    |
+| Audio     |      | x     | x     | x              | x    |
 | Streaming |      | x     | x     | x              | x    |
 | Hardware  |      |       |       | x              | x    |
 | AI*       |      |       |       |                |      |
