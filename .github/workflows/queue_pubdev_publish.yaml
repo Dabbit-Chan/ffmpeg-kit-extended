@@ -51,18 +51,7 @@ jobs:
 
           case "$status_code" in
             200)
-              published="$(python3 - <<'PY'
-import json
-import os
-
-package_version = os.environ["PACKAGE_VERSION"]
-with open("pubdev-package.json", encoding="utf-8") as fh:
-    data = json.load(fh)
-
-versions = {entry["version"] for entry in data.get("versions", [])}
-print("true" if package_version in versions else "false")
-PY
-)"
+              published="$(python3 -c 'import json, os; data = json.load(open("pubdev-package.json", encoding="utf-8")); versions = {entry["version"] for entry in data.get("versions", [])}; print("true" if os.environ["PACKAGE_VERSION"] in versions else "false")')"
               ;;
             404)
               published="false"
